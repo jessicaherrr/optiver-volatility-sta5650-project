@@ -1,0 +1,15 @@
+pandas
+polars
+pyarrow
+numpy
+scipy
+statsmodels
+scikit-learn
+factor_analyzer
+matplotlib
+seaborn
+lightgbm
+jupyter
+nbstripout
+kaggle
+pytest
