@@ -10,7 +10,7 @@ if (identical(unname(getOption("repos")["CRAN"]), "@CRAN@") ||
 required_packages <- c(
   "arrow", "tidyverse", "psych", "GPArotation", "car", "MASS", "MVN", "heplots",
   "lmtest", "sandwich", "glmnet", "pls", "forecast", "corrplot", "cluster",
-  "factoextra", "rmarkdown"
+  "factoextra", "rmarkdown", "mcmcse", "tseries"
 )
 
 is_missing <- !vapply(
