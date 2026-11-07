@@ -29,7 +29,7 @@ market depth, order imbalance, trading activity) still add predictive power?
 | --- | --- | --- | --- |
 | A | Data & EDA | `01_features` | `03_eda` |
 | B | Multivariate structure (H1, H2) | | `05_pca_fa_cluster`, `06_manova` |
-| C | Modeling & validation (H3, H4) | `02_time_order`, `07_lightgbm_benchmark` | `04_acf`, `04b_stationarity`, `07_regression` |
+| C | Modeling & validation (H3, H4) | `02_time_order`, `02b_day_boundaries`, `07_lightgbm_benchmark` | `04_acf`, `04b_stationarity`, `04c_intraday_and_stability`, `07_regression` |
 
 ## Which language for what
 
@@ -37,9 +37,11 @@ market depth, order imbalance, trading activity) still add predictive power?
 | --- | --- | --- |
 | 1. Build features | Python | `notebooks/01_features.ipynb` |
 | 2. Recover time order | Python | `notebooks/02_time_order.ipynb` |
+| 2b. Find trading-day boundaries | Python | `notebooks/02b_day_boundaries.ipynb` |
 | 3. EDA | R | `R/03_eda.R` |
 | 4. ACF | R | `R/04_acf.R` |
 | 4b. Stationarity and dependence checks | R | `R/04b_stationarity.R` |
+| 4c. Intraday pattern and factor stability | R | `R/04c_intraday_and_stability.R` |
 | 5. PCA, factor analysis, clustering | R | `R/05_pca_fa_cluster.R` |
 | 6. MANOVA and profile analysis | R | `R/06_manova.R` |
 | 7. Regression models | R | `R/07_regression.R` |
@@ -54,6 +56,8 @@ between the two.**
   target from `train.csv`.
 - `data/processed/time_order.parquet`, from `02_time_order`, with columns `time_id`
   and `time_rank`.
+- `data/processed/day_slots.parquet`, from `02b_day_boundaries`, with columns
+  `time_id`, `day_id`, and `slot`.
 
 LightGBM predictions will be handed off the same way later, as a parquet file that
 Python writes and R reads.
@@ -127,9 +131,9 @@ The download is about 1.7 GB, and it is larger once unzipped.
 
 Feature extraction reads every stock's raw files, so it can be slow on a laptop.
 You can run it on Kaggle Notebooks instead, where the data is already available.
-The team then only needs to share the small `features.parquet` and
-`time_order.parquet`, which go in `data/processed/`. Share them through a private
-channel, not through this repo.
+The team then only needs to share the small `features.parquet`,
+`time_order.parquet`, and `day_slots.parquet`, which go in `data/processed/`. Share
+them through a private channel, not through this repo.
 
 ## Team workflow
 
