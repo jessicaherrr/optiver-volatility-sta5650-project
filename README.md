@@ -29,7 +29,7 @@ market depth, order imbalance, trading activity) still add predictive power?
 | --- | --- | --- | --- |
 | A | Data & EDA | `01_features` | `03_eda` |
 | B | Multivariate structure (H1, H2) | | `05_pca_fa_cluster`, `06_manova` |
-| C | Modeling & validation (H3, H4) | `02_time_order`, `07_lightgbm_benchmark` | `04_acf`, `07_regression` |
+| C | Modeling & validation (H3, H4) | `02_time_order`, `07_lightgbm_benchmark` | `04_acf`, `04b_stationarity`, `07_regression` |
 
 ## Which language for what
 
@@ -39,6 +39,7 @@ market depth, order imbalance, trading activity) still add predictive power?
 | 2. Recover time order | Python | `notebooks/02_time_order.ipynb` |
 | 3. EDA | R | `R/03_eda.R` |
 | 4. ACF | R | `R/04_acf.R` |
+| 4b. Stationarity and dependence checks | R | `R/04b_stationarity.R` |
 | 5. PCA, factor analysis, clustering | R | `R/05_pca_fa_cluster.R` |
 | 6. MANOVA and profile analysis | R | `R/06_manova.R` |
 | 7. Regression models | R | `R/07_regression.R` |
@@ -46,14 +47,18 @@ market depth, order imbalance, trading activity) still add predictive power?
 
 ### The handoff rule
 
-Python writes `data/processed/features.parquet`, and R reads it with arrow.
-**Nothing else crosses between the two.**
+Python writes these files, and R reads them with arrow. **Nothing else crosses
+between the two.**
 
-So everything R needs from Python must be a column in that file:
+- `data/processed/features.parquet`, from `01_features`, which also attaches the
+  target from `train.csv`.
+- `data/processed/time_order.parquet`, from `02_time_order`, with columns `time_id`
+  and `time_rank`.
 
-- `01_features` attaches the target from `train.csv`.
-- `02_time_order` adds the `time_rank` column. Rerun it whenever you rerun
-  `01_features`.
+LightGBM predictions will be handed off the same way later, as a parquet file that
+Python writes and R reads.
+
+R can also read the original Kaggle files in `data/raw/`, such as `train.csv`.
 
 R scripts can share their own files with each other, such as
 `stock_clusters.parquet`. Python never reads those files.
@@ -122,9 +127,9 @@ The download is about 1.7 GB, and it is larger once unzipped.
 
 Feature extraction reads every stock's raw files, so it can be slow on a laptop.
 You can run it on Kaggle Notebooks instead, where the data is already available.
-The team then only needs to share the small `features.parquet`, which goes in
-`data/processed/`. Share it through a private channel, not through this repo.
-Run `02_time_order` before sharing, so that the file includes `time_rank`.
+The team then only needs to share the small `features.parquet` and
+`time_order.parquet`, which go in `data/processed/`. Share them through a private
+channel, not through this repo.
 
 ## Team workflow
 
